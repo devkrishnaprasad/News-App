@@ -22,3 +22,15 @@ class SavedNewsFailure extends SavedNewsState {
 class SavedNewsEmpty extends SavedNewsState {}
 
 class AllNewsEmpty extends SavedNewsState {}
+
+class SavedImageLoading extends SavedNewsState {}
+
+class SavedImagedLoaded extends SavedNewsState {
+  final String imagePath;
+
+  SavedImagedLoaded({required this.imagePath});
+}
+
+class SavedImagedLoadingFailed extends SavedNewsState {
+  late final String errorMessage;
+}

@@ -21,6 +21,7 @@ class NewsRepository {
 
       if (response.isSuccessful) {
         final responseData = jsonDecode(response.body);
+
         return NewsResponse.fromJson(responseData);
       } else {
         log("Data is not successful: ${response.error}");

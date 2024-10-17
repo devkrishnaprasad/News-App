@@ -1,6 +1,9 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:news_app_test/core/utils/local_storage/local_database.dart';
+import 'package:news_app_test/features/onboarding/view/onboarding_controller.dart';
 import 'package:news_app_test/features/settings/views/cubit/settings_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -43,5 +46,16 @@ class SettingsCubit extends Cubit<SettingsState> {
     await prefs.setString('username', username);
     await prefs.setStringList('favoriteCategory', favoriteCategory);
     await prefs.setString('city', city);
+  }
+
+  Future<void> logoutUser(context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    LocalDBService localDBSerive = LocalDBService();
+    await localDBSerive.clearAllData();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+    );
   }
 }

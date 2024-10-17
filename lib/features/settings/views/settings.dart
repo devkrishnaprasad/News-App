@@ -21,7 +21,10 @@ class SettingsPage extends StatelessWidget {
           onPressed: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => NavBarPage()),
+              MaterialPageRoute(
+                  builder: (context) => NavBarPage(
+                        isInternetConnected: true,
+                      )),
             );
           },
         ),
@@ -210,6 +213,12 @@ class SettingsPage extends StatelessWidget {
                   },
                   child: const Text('Update Settings'),
                 ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                    onPressed: () async {
+                      context.read<SettingsCubit>().logoutUser(context);
+                    },
+                    child: const Text('Log Out'))
               ],
             );
           },

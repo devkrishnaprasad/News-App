@@ -38,7 +38,10 @@ class AllNews extends StatelessWidget {
                       var data = state.newsList[0].articles[index];
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => NewsDetails(article: data),
+                          builder: (context) => NewsDetails(
+                            article: data,
+                            isSavedNews: false,
+                          ),
                         ),
                       );
                     },

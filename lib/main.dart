@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:news_app_test/core/themes/app_theme.dart';
 import 'package:news_app_test/core/utils/location_service/cubit/location_cubit.dart';
+import 'package:news_app_test/core/utils/navbar/cubit/navbar_state.dart';
 import 'package:news_app_test/features/onboarding/cubit/onboarding_cubit.dart';
 import 'package:news_app_test/features/settings/views/cubit/settings_cubit.dart';
 import 'package:news_app_test/features/settings/views/cubit/settings_state.dart';
@@ -30,6 +31,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => OnboardingCubit(),
+        ),
+        BlocProvider(
+          create: (context) => NavbarCubit(),
         ),
         BlocProvider(
           create: (context) => LocationCubit(),

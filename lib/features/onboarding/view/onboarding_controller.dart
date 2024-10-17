@@ -8,6 +8,7 @@ import 'package:news_app_test/features/onboarding/cubit/onboarding_cubit.dart';
 import 'package:news_app_test/features/onboarding/view/onboarding_page_1.dart';
 import 'package:news_app_test/features/onboarding/view/onboarding_page_2.dart';
 import 'package:news_app_test/features/onboarding/view/onboarding_page_3.dart';
+import 'package:news_app_test/features/splash_screen/view/cubit/splash_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -106,10 +107,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               localStorage.write('isLoggedIn', 'true');
                             }
                             localStorage.write('isLoggedIn', 'true');
+                            context.read<SplashCubit>().getUsername();
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => NavBarPage(),
+                                builder: (context) =>
+                                    NavBarPage(isInternetConnected: true),
                               ),
                             );
                           }

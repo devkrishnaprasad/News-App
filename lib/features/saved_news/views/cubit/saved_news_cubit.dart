@@ -37,4 +37,15 @@ class SavedNewsCubit extends Cubit<SavedNewsState> {
       emit(SavedNewsFailure(e.toString()));
     }
   }
+
+  getLocalImage(fileName) async {
+    try {
+      emit(SavedImageLoading());
+      LocalDBService localDBSerive = LocalDBService();
+      var data = await localDBSerive.getLocalImagePath(fileName);
+      emit(SavedImagedLoaded(imagePath: data!));
+    } catch (e) {
+      emit(SavedImagedLoadingFailed());
+    }
+  }
 }

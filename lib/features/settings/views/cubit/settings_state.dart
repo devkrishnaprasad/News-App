@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 class SettingsState extends Equatable {
   final bool themeMode;
   final String username;
-  final List<String>? favoriteCategories; // Change to List<String>
+  final List<String>? favoriteCategories;
   final String city;
 
   SettingsState({

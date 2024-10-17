@@ -1,19 +1,24 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: public_member_api_docs, sort_constructors_first, prefer_typing_uninitialized_variables
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:news_app_test/features/favourite_news/view/cubit/favourite_cubit.dart';
-import 'package:news_app_test/features/favourite_news/view/cubit/favourite_state.dart';
+import 'package:news_app_test/features/saved_news/views/cubit/saved_news_cubit.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import 'package:news_app_test/core/utils/wrapper.dart';
+import 'package:news_app_test/features/favourite_news/view/cubit/favourite_cubit.dart';
+import 'package:news_app_test/features/favourite_news/view/cubit/favourite_state.dart';
 
 // ignore: must_be_immutable
 class NewsDetails extends StatelessWidget {
-  // ignore: prefer_typing_uninitialized_variables
+  final bool isSavedNews;
   var article;
   NewsDetails({
     super.key,
+    required this.isSavedNews,
     required this.article,
   });
   AppWrapper appWrapper = AppWrapper();
@@ -82,18 +87,45 @@ class NewsDetails extends StatelessWidget {
               const SizedBox(height: 10),
               article.urlToImage == null
                   ? const SizedBox()
-                  : SizedBox(
-                      width: double.infinity,
-                      height: MediaQuery.of(context).size.height * 0.3,
-                      child: CachedNetworkImage(
-                        imageUrl: article.urlToImage!,
-                        placeholder: (context, url) => const Center(
-                          child: CircularProgressIndicator(),
+                  : isSavedNews
+                      ? BlocProvider(
+                          create: (context) =>
+                              SavedNewsCubit()..getLocalImage(article.title),
+                          child: BlocBuilder<SavedNewsCubit, SavedNewsState>(
+                            builder: (context, state) {
+                              if (state is SavedImageLoading) {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              if (state is SavedImagedLoaded) {
+                                return SizedBox(
+                                  width: double.infinity,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.3,
+                                  child: Image.file(File(state.imagePath)),
+                                );
+                              }
+                              if (state is SavedImagedLoadingFailed) {
+                                return Text("Failed to load image");
+                              } else {
+                                return const SizedBox();
+                              }
+                            },
+                          ),
+                        )
+                      : SizedBox(
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.height * 0.3,
+                          child: CachedNetworkImage(
+                            imageUrl: article.urlToImage!,
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
+                          ),
                         ),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                      ),
-                    ),
               const SizedBox(height: 10),
               Text(article.content == null ? '' : article.content!),
               const SizedBox(height: 20),

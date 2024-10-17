@@ -39,7 +39,7 @@ class SplashCubit extends Cubit<SplashState> {
           } else {
             emit(
               SplashNetworkError(
-                message: 'Network Issue',
+                message: 'Internet Not Connected',
                 isLoggedIn: true,
                 username: username,
                 greating: _getGreetingMessage(),

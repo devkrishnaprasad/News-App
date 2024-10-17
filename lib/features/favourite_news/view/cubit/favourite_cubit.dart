@@ -14,24 +14,22 @@ class FavouriteNewsCubit extends Cubit<FavouriteNewsState> {
   String? selectedCategory;
   FavouriteNewsCubit({this.newsRepository}) : super(FavouriteNewsInitial());
 
-  fetchFavouriteCategory() async {
-    print('loading %%%%%%%%%%%%%');
-    emit(FavouriteCategoryLoading());
+  Future<void> fetchFavouriteCategory() async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final List<String>? items = prefs.getStringList('favoriteCategory');
 
       if (items != null && items.isNotEmpty) {
         selectedCategory = items[0];
-      }
 
-      emit(FavouriteCategoryLoaded(categoryList: items ?? []));
-    } catch (e) {
-      emit(FavouriteCategoryFailed(errorMessage: e.toString()));
-    }
+        selectCategory(selectedCategory!, items);
+      }
+    } catch (e) {}
   }
 
-  Future<void> fetchFavouriteNews() async {
+  Future<void> fetchFavouriteNews(categoryList) async {
+    if (selectedCategory == null) return;
+
     AppWrapper appWrapper = AppWrapper();
     try {
       emit(FavouriteNewsLoading());
@@ -39,19 +37,23 @@ class FavouriteNewsCubit extends Cubit<FavouriteNewsState> {
 
       if (status) {
         final newsResponse =
-            await newsRepository!.fetchFavouriteHeadLine('sports');
-
-        if (newsResponse == null || newsResponse.articles.isEmpty) {
+            await newsRepository!.fetchFavouriteHeadLine(selectedCategory!);
+        if (newsResponse == null) {
           emit(FavouriteNewsEmpty());
         } else {
-          emit(FavouriteNewsSuccess([newsResponse]));
+          emit(FavouriteNewsSuccess([newsResponse], categoryList));
         }
       } else {
-        emit(FavouriteNewsFailure('Internet issue'));
+        emit(FavouriteNewsFailure('Internet Not Connected'));
       }
     } catch (e) {
       emit(FavouriteNewsFailure(e.toString()));
     }
+  }
+
+  void selectCategory(String category, List<String> categoryList) {
+    selectedCategory = category;
+    fetchFavouriteNews(categoryList);
   }
 
   saveNewOffline(List<Article> data) async {
@@ -84,11 +86,5 @@ class FavouriteNewsCubit extends Cubit<FavouriteNewsState> {
     LocalDBService localDBService = LocalDBService();
     await localDBService.deleteNewsArticleByTitle(title);
     emit(NewsNotSavedState());
-  }
-
-  void selectCategory(String category) {
-    selectedCategory = category;
-    emit(FavouriteCategoryLoaded(
-        categoryList: (state as FavouriteCategoryLoaded).categoryList));
   }
 }
